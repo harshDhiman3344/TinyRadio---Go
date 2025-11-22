@@ -13,6 +13,7 @@ func main() {
 
 	// Make channels and scanner that carries the strings.
 	messages := make(chan string)
+	MainPipe := make(chan string)
 	rec2 := make(chan string)
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Println("You: ")
@@ -32,11 +33,23 @@ func main() {
 			if scanner.Scan() {
 				text := scanner.Text()
 
-				for _, r := range recievers {
-					r <- text
-				}
+				MainPipe <- text
 			}
 
+		}
+	}()
+
+	//PROCESSOR GOROUTINE.
+
+	go func() {
+		for {
+			mainMsg := <-MainPipe
+			if mainMsg != "" {
+				fmt.Printf("Error, Empty Message")
+			}
+			for _, r := range recievers {
+				r <- mainMsg
+			}
 		}
 	}()
 
