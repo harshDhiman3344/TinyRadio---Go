@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -44,11 +45,39 @@ func main() {
 				continue
 			}
 
+			history := []string{}
+
+			history = append(history, mainMsg)
+
+			//Processing commands
+			if strings.HasPrefix(mainMsg, "/") {
+
+				if mainMsg == "/help" {
+					fmt.Println("Here are the commands:\n/help: prints this\n/history: Shows message history\n/time: Shows current time.\n ")
+				}
+
+				if mainMsg == "/time" {
+					fmt.Printf("Time : [%s]", time.Now().Format("15:04:05"))
+				}
+
+				if mainMsg == "/history" {
+					fmt.Println("Message History:")
+					for i, h := range history {
+						fmt.Printf("%d) %s\n", i+1, h)
+					}
+					fmt.Println("You: ")
+				}
+
+				continue
+
+			}
+
 			// broadcast to all receivers
 			for _, r := range recievers {
 				r <- mainMsg
 			}
 		}
+
 	}()
 
 	// reciever2
@@ -61,6 +90,7 @@ func main() {
 	}()
 
 	// reciever1
+
 	for {
 		msg := <-messages
 		fmt.Printf("\n[%s]Reciever 1: %s\n", time.Now().Format("15:04:05"), msg)
