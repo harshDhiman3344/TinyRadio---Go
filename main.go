@@ -34,7 +34,7 @@ func main() {
 			}
 		}
 	}()
-
+	history := []string{}
 	// PROCESSOR GOROUTINE.
 	go func() {
 		for {
@@ -44,10 +44,6 @@ func main() {
 			if mainMsg == "" {
 				continue
 			}
-
-			history := []string{}
-
-			history = append(history, mainMsg)
 
 			//Processing commands
 			if strings.HasPrefix(mainMsg, "/") {
@@ -69,6 +65,8 @@ func main() {
 				}
 
 				continue
+
+				history = append(history, mainMsg)
 
 			}
 
